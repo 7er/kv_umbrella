@@ -19,4 +19,8 @@ defmodule KV.Bucket do
   def put(bucket, key, value) do
     Agent.update(bucket, &HashDict.put(&1, key, value))
   end
+
+  def delete(bucket, key) do
+    Agent.update(bucket, &HashDict.delete(&1, key))
+  end
 end

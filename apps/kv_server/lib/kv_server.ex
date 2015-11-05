@@ -26,33 +26,41 @@ defmodule KVServer do
     # 3. `active: false` - blocks on `:gen_tcp.recv/2` until data is available
     # 4. `reuseaddr: true` - allows us to reuse the address if the listener crashes
     #
-    {:ok, socket} = :gen_tcp.listen(port,
-                                    [:binary, packet: :line, active: false, reuseaddr: true])
+    {:ok, socket} = :gen_tcp.listen(
+      port,
+      [:binary, packet: :line, active: false, reuseaddr: true])
     IO.puts "Accepting connections on port #{port}"
     loop_acceptor(socket)
   end
 
   defp loop_acceptor(socket) do
     {:ok, client} = :gen_tcp.accept(socket)
-    {:ok, pid} = Task.Supervisor.start_child(KVServer.TaskSupervisor, fn -> serve(client) end) # spawn this to have concurrency
+    # spawn to have concurrent server processes for each accept
+    {:ok, pid} = Task.Supervisor.start_child(KVServer.TaskSupervisor, fn -> serve(client) end) 
     :ok = :gen_tcp.controlling_process(client, pid)
     loop_acceptor(socket)
   end
 
-  defp serve(socket) do
-    socket
-    |> read_line()
-    |> write_line(socket)
-
+  defp serve(socket) do    
+    msg = case :gen_tcp.recv(socket, 0) do
+            {:ok, data} ->
+              case KVServer.Command.parse(data) do
+                {:ok, command} -> KVServer.Command.run(command)
+                {:error, _} = err -> err
+              end
+            {:error, _} = err -> err
+          end
+    write_line(socket, format_msg(msg))
     serve(socket)
   end
 
-  defp read_line(socket) do
-    {:ok, data} = :gen_tcp.recv(socket, 0)
-    data
+  defp write_line(socket, line) do
+    :gen_tcp.send(socket, line)
   end
 
-  defp write_line(line, socket) do
-    :gen_tcp.send(socket, line)
-  end  
+  defp format_msg({:ok, text}), do: text
+  defp format_msg({:error, :unknown_command}), do: "UNKNOWN COMMAND\r\n"
+  defp format_msg({:error, :not_found}), do: "NOT FOUND\r\n"
+  defp format_msg({:error, _}), do: "ERROR\r\n"
+                  
 end
