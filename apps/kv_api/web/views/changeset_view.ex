@@ -1,5 +1,5 @@
-defmodule KvApi.ChangesetView do
-  use KvApi.Web, :view
+defmodule .ChangesetView do
+  use .Web, :view
 
   def render("error.json", %{changeset: changeset}) do
     # When encoded, the changeset returns its errors

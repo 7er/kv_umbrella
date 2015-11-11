@@ -2,7 +2,7 @@
 defmodule KvApi.BucketControllerTest do
   use KvApi.ConnCase
 
-  @valid_attrs %{name: "some content"}
+  @valid_attrs %{id: "list", name: "some content"}
   @invalid_attrs %{}
 
   setup do
@@ -32,11 +32,6 @@ defmodule KvApi.BucketControllerTest do
     conn = post conn, bucket_path(conn, :create), bucket: @valid_attrs
     assert json_response(conn, 201)["data"]["id"]
     assert Repo.get_by(Bucket, @valid_attrs)
-  end
-
-  test "does not create resource and renders errors when data is invalid", %{conn: conn} do
-    conn = post conn, bucket_path(conn, :create), bucket: @invalid_attrs
-    assert json_response(conn, 422)["errors"] != %{}
   end
 
 end
