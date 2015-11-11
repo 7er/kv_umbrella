@@ -1,7 +1,8 @@
+
 defmodule KvApi.BucketControllerTest do
   use KvApi.ConnCase
 
-  alias KvApi.Bucket
+  #alias KvApi.Bucket
   @valid_attrs %{name: "some content"}
   @invalid_attrs %{}
 
@@ -10,23 +11,23 @@ defmodule KvApi.BucketControllerTest do
     {:ok, conn: conn}
   end
 
-  test "lists all entries on index", %{conn: conn} do
-    conn = get conn, bucket_path(conn, :index)
-    assert json_response(conn, 200)["data"] == []
-  end
+  # test "lists all entries on index", %{conn: conn} do
+  #   conn = get conn, bucket_path(conn, :index)
+  #   assert json_response(conn, 200)["data"] == []
+  # end
 
-  test "shows chosen resource", %{conn: conn} do
-    bucket = Repo.insert! %Bucket{}
-    conn = get conn, bucket_path(conn, :show, bucket)
-    assert json_response(conn, 200)["data"] == %{"id" => bucket.id,
-      "name" => bucket.name}
-  end
+  # test "shows chosen resource", %{conn: conn} do
+  #   bucket = Repo.insert! %Bucket{}
+  #   conn = get conn, bucket_path(conn, :show, bucket)
+  #   assert json_response(conn, 200)["data"] == %{"id" => bucket.id,
+  #     "name" => bucket.name}
+  # end
 
-  test "does not show resource and instead throw error when id is nonexistent", %{conn: conn} do
-    assert_raise Ecto.NoResultsError, fn ->
-      get conn, bucket_path(conn, :show, -1)
-    end
-  end
+  # test "does not show resource and instead throw error when id is nonexistent", %{conn: conn} do
+  #   assert_raise Ecto.NoResultsError, fn ->
+  #     get conn, bucket_path(conn, :show, -1)
+  #   end
+  # end
 
   test "creates and renders resource when data is valid", %{conn: conn} do
     conn = post conn, bucket_path(conn, :create), bucket: @valid_attrs

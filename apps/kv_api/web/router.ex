@@ -1,26 +1,14 @@
 defmodule KvApi.Router do
   use KvApi.Web, :router
 
-  pipeline :browser do
-    plug :accepts, ["html"]
-    plug :fetch_session
-    plug :fetch_flash
-    plug :protect_from_forgery
-    plug :put_secure_browser_headers
-  end
-
   pipeline :api do
     plug :accepts, ["json"]
   end
 
-  scope "/", KvApi do
-    pipe_through :browser # Use the default browser stack
-
-    get "/", PageController, :index
+  scope "/api", KvApi do
+    pipe_through :api
+    resources "/buckets", BucketController, only: [:create] do
+      resources "key-values", KeyValueController, :except: [:new, :edit]
+    end
   end
-
-  # Other scopes may use custom stacks.
-  # scope "/api", KvApi do
-  #   pipe_through :api
-  # end
 end
