@@ -2,7 +2,6 @@
 defmodule KvApi.BucketControllerTest do
   use KvApi.ConnCase
 
-  #alias KvApi.Bucket
   @valid_attrs %{name: "some content"}
   @invalid_attrs %{}
 
@@ -40,23 +39,4 @@ defmodule KvApi.BucketControllerTest do
     assert json_response(conn, 422)["errors"] != %{}
   end
 
-  test "updates and renders chosen resource when data is valid", %{conn: conn} do
-    bucket = Repo.insert! %Bucket{}
-    conn = put conn, bucket_path(conn, :update, bucket), bucket: @valid_attrs
-    assert json_response(conn, 200)["data"]["id"]
-    assert Repo.get_by(Bucket, @valid_attrs)
-  end
-
-  test "does not update chosen resource and renders errors when data is invalid", %{conn: conn} do
-    bucket = Repo.insert! %Bucket{}
-    conn = put conn, bucket_path(conn, :update, bucket), bucket: @invalid_attrs
-    assert json_response(conn, 422)["errors"] != %{}
-  end
-
-  test "deletes chosen resource", %{conn: conn} do
-    bucket = Repo.insert! %Bucket{}
-    conn = delete conn, bucket_path(conn, :delete, bucket)
-    assert response(conn, 204)
-    refute Repo.get(Bucket, bucket.id)
-  end
 end

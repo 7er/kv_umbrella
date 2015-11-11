@@ -7,8 +7,8 @@ defmodule KvApi.Router do
 
   scope "/api", KvApi do
     pipe_through :api
-    resources "/buckets", BucketController, only: [:create] do
-      resources "key-values", KeyValueController, :except: [:new, :edit]
+    resources "/buckets", BucketController, only: [:create, :show] do
+      resources "key-values", KeyValueController, except: [:new, :edit]
     end
   end
 end
