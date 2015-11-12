@@ -10,7 +10,6 @@ defmodule KvApi.BucketView do
   end
 
   def render("bucket.json", %{bucket: bucket}) do
-    %{id: bucket.id,
-      name: bucket.name}
+    %{id: bucket.id}
   end
 end
